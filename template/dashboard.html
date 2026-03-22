@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en" style="background-color: rgba(0,0,0,0.0); width:100%; height: 100%;">
 
@@ -39,6 +37,14 @@
         .content {
             padding: 0;
         }
+
+        .hidden {
+            display: none;
+        }
+
+        .page-hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -56,16 +62,13 @@
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
 
-
-
-
-
-                                        <div class="modal-body">
+                                        <!-- LOGIN PAGE -->
+                                        <div class="modal-body" id="loginPage">
                                             <div class="content">
                                                 <section class="common-box ">
                                                     <div class="container">
                                                         <div class="section-title center-align">
-                                                            <h2>Log in with your Creative ID</h2>
+                                                            <h2>Log in with your Growps ID</h2>
                                                         </div>
                                                         <div class="row div-content-center">
                                                             <div class="col-md-12 col-sm-12">
@@ -75,6 +78,17 @@
                                                                     required="required" autocomplete="off"><input
                                                                         name="_token" type="hidden"
                                                                         value="">
+                                                                    <div class="form-group">
+                                                                        <label for="server-select">Select Server:</label>
+                                                                        <select id="server-select"
+                                                                            class="form-control grow-text"
+                                                                            name="server" required>
+                                                                            <option value="">Choose Server</option>
+                                                                            <option value="us">US Server</option>
+                                                                            <option value="eu">EU Server</option>
+                                                                            <option value="asia">Asia Server</option>
+                                                                        </select>
+                                                                    </div>
                                                                     <div class="form-group">
                                                                         <input id="login-name"
                                                                             class="form-control grow-text"
@@ -92,14 +106,13 @@
                                                                             Password & Log In!</small>
                                                                     </div>
                                                                     <div class="form-group text-center forgot-password">
-                                                                        <a href="https://discord.gg/cps"
-                                                                            target="_blank">Need Help? Join our
-                                                                            Discord!</a>
+                                                                        <a href="javascript:void(0);" onclick="showSupportPage()">Page
+                                                                            Support!</a>
                                                                     </div>
                                                                     <div class="form-group text-center">
                                                                         <input id="submit-btn"
                                                                             class="btn btn-lg btn-primary grow-button"
-                                                                            type="submit" value="Register">
+                                                                            type="submit" value="Register" disabled>
                                                                     </div>
                                                                 </form>
                                                             </div>
@@ -107,8 +120,42 @@
                                                     </div>
                                                 </section>
                                             </div>
-
                                         </div>
+
+                                        <!-- SUPPORT PAGE -->
+                                        <div class="modal-body page-hidden" id="supportPage">
+                                            <div class="content">
+                                                <section class="common-box ">
+                                                    <div class="container">
+                                                        <div class="section-title center-align">
+                                                            <h2>Need Help or have problem?</h2>
+                                                            <p><strong>Customer Service</strong></p>
+                                                        </div>
+                                                        <div class="row div-content-center">
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    <small>Discord serves as the primary and fastest support channel for our Growtopia private server. Kindly open a ticket in #support Discord channel for any assistance.</small>
+                                                                </div>
+                                                                <div class="form-group text-center" style="margin-top: 30px;">
+                                                                    <a href="https://discord.gg/cps" target="_blank" class="btn btn-lg btn-primary grow-button" style="background-color: #5865f2; display: inline-block; padding: 10px 40px; margin: 5px;">
+                                                                        🔗 Discord Support
+                                                                    </a>
+                                                                </div>
+                                                                <div class="form-group text-center">
+                                                                    <a href="https://wa.me/yourwhatsappnumber" target="_blank" class="btn btn-lg btn-primary grow-button" style="background-color: #25d366; display: inline-block; padding: 10px 40px; margin: 5px;">
+                                                                        💬 WhatsApp
+                                                                    </a>
+                                                                </div>
+                                                                <div class="form-group text-center" style="margin-top: 20px;">
+                                                                    <input type="button" onclick="showLoginPage()" class="btn btn-lg btn-primary grow-button" value="← BACK" style="display: inline-block; padding: 10px 40px;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -128,6 +175,28 @@
     src="https://s3.eu-west-1.amazonaws.com/cdn.growtopiagame.com/website/resources/vendors/bootstrap/javascripts/bootstrap.min.js"></script>
 <script>
     let clicked = false;
+    
+    function showLoginPage() {
+        $('#loginPage').removeClass('page-hidden');
+        $('#supportPage').addClass('page-hidden');
+    }
+
+    function showSupportPage() {
+        $('#loginPage').addClass('page-hidden');
+        $('#supportPage').removeClass('page-hidden');
+    }
+
+    function validateForm() {
+        const serverSelect = $('#server-select').val();
+
+        // Tombol hanya enable jika server dipilih
+        if (serverSelect !== '') {
+            $('#submit-btn').prop('disabled', false);
+        } else {
+            $('#submit-btn').prop('disabled', true);
+        }
+    }
+
     $("a").click(function () { if (clicked === false) { clicked = true; return true; } $(this).attr("onclick", "return false;"); });
     $('document').ready(function () {
         document.onkeydown = (e) => {
@@ -167,6 +236,11 @@
         });
         $('#submit-btn').val($('#password').val().length > 0 && $('#login-name').val().length > 0 ? 'Log in' : 'Register/Log in');
 
+        // Validasi saat server berubah
+        $('#server-select').on('change', function () {
+            validateForm();
+        });
+
         $('form').on('submit', function() {
             if ($('#login-name').val().length === 0 && $('#password').val().length === 0) {
                 $('<input>').attr({
@@ -185,7 +259,8 @@
             }
         });
 
-        // $('form').submit($('form .grow-button').attr('disabled', 'true'));
+        // Initialize button state
+        validateForm();
 
         var observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
